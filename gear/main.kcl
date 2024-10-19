@@ -1,0 +1,60 @@
+fn gear = (radius, sectors, height, center, plane, holeRadius, startDegree) => {
+  arcWidth = 360 / sectors
+  cx = center[0]
+  cy = center[1]
+
+  fn pointFor = (interval, radius) => {
+    return [
+      cx + cos(toRadians(interval)) * radius,
+      cy + sin(toRadians(interval)) * radius
+    ]
+  }
+
+  fn drawOneSectorOfGear = (i, acc) => {
+    angleStart = int(i - 1) * arcWidth
+    angleEnd = i * arcWidth
+    interval = (angleEnd - angleStart) / 3
+    intervals = [
+      angleStart + (0 * interval),
+      angleStart + (1 * interval),
+      angleStart + (2 * interval),
+      angleStart + (3 * interval),
+    ]
+
+    // Returns arc data.
+    fn ofIntervals = (start, end, r) => {
+      return {
+         angleStart: intervals[start],
+         angleEnd: intervals[end],
+         radius: r
+       }
+    }
+    
+    withArc = acc
+      // Draw gear body, along the inner circle.
+      |> arc(ofIntervals(0, 1, radius), %)
+      // Side of tooth, from base up to the tip
+      |> lineTo(pointFor(intervals[1], radius + height), %)
+      // Outer edge of tooth
+      |> arc(ofIntervals(1, 2, radius + height), %)
+      // End of tooth, tip back down to the base
+      |> lineTo(pointFor(intervals[2], radius), %)
+      // Tooth is finished, draw more of the gear body.
+      |> arc(ofIntervals(2, 3, radius), %)
+    return withArc
+  }
+  
+  return startSketchOn(plane)
+  |> startProfileAt([radius + cx, cy], %)
+  |> reduce([1..sectors], %, drawOneSectorOfGear)
+  // |> close(%)
+  // |> hole(circle({ center: center, radius: holeRadius }, %), %)
+  // |> extrude(10, %)
+}
+
+radius = 20
+sectors = 8
+height = 10
+center = [40, 10]
+holeRadius = 7
+gear(radius, sectors, height, center, "YZ", holeRadius, 10)

@@ -1,0 +1,21 @@
+fn semicircle = (radius, start) => {
+  return startSketchOn('XY')
+    |> startProfileAt(start, %)
+    |> arc({
+         angleStart: 0,
+         angleEnd: 180,
+         radius: radius
+       }, %)
+    |> lineTo(start, %)
+}
+
+fn sphere = (radius, start) => {
+  return 
+    semicircle(radius, start)
+      |> revolve({ axis: 'X' }, %)
+}
+
+radius = 20
+start = [0, 0]
+asdf = 3
+sphere(radius, start)
