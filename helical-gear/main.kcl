@@ -60,12 +60,13 @@ fn helicalGear = (radius, sectors, height, center, pitch, numLofts) => {
         plane = offsetPlane("YZ", height * numLoft)
         return gearSketch(radius, sectors, height, center, plane, pitch * numLoft)
     })
-  |> loft(%)
+  |> loft(%, {vDegree: 1})
 }
 
-radius = 20
+radius = 15
 numTeeth = 8
-height = 10
+height = 2
 center = [40, 10]
-pitch = 10
-helicalGear(radius, numTeeth, height, center, pitch, 3)
+pitch = 15
+numLofts = 10
+helicalGear(radius, numTeeth, height, center, pitch, numLofts)
