@@ -1,0 +1,17 @@
+// Creates a parallelogram with the given side lengths.
+fn pgram = (side1, side2) => {
+  d1 = side1/2
+  d2 = side2/2
+  l = sqrt(d1 ^ 2 + d2 ^ 2)
+  theta = toDegrees(atan(d2 / d1))
+  angle1 = 2 * theta
+  angle2 = 2 * (90 - angle1)
+  return startSketchAt([0, 0])
+  |> angledLine({ angle: angle1, length: l }, %)
+  |> angledLine({ angle: angle2, length: l }, %)
+  |> angledLine({ angle: 180 + angle1, length: l }, %)
+  |> angledLine({ angle: 180 + angle2, length: l }, %)
+  // |> close(%)
+}
+
+pgram(6, 15)
