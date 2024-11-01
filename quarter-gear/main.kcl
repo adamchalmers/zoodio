@@ -1,5 +1,5 @@
-fn gearSketch = (radius, sectors, height, center, plane, startDegree) => {
-  arcWidth = 360 / sectors
+fn gearSketch = (radius, numTeeth, height, center, plane, totalDegrees, startDegree) => {
+  arcWidth = totalDegrees / numTeeth
   cx = center[0]
   cy = center[1]
 
@@ -10,9 +10,10 @@ fn gearSketch = (radius, sectors, height, center, plane, startDegree) => {
     ]
   }
 
+ theta = (totalDegrees/3) / numTeeth
   fn drawOneSectorOfGear = (i, acc) => {
     angleStart = startDegree + int(i - 1) * arcWidth
-    theta = 120 / sectors
+   
     intervals = [
       angleStart,
       angleStart + theta,
@@ -44,27 +45,34 @@ fn gearSketch = (radius, sectors, height, center, plane, startDegree) => {
   }
 
   return startSketchOn(plane)
-  |> startProfileAt([
+  |> startProfileAt(center, %)
+  |> lineTo([
        cos(toRadians(startDegree)) * radius + cx,
        sin(toRadians(startDegree)) * radius + cy
      ], %)
-  |> reduce([1 .. int(sectors)], %, drawOneSectorOfGear)
+  |> reduce([1 .. int(numTeeth)], %, drawOneSectorOfGear)
+  |> lineTo(center, %)
   |> close(%)
 }
 
-fn helicalGear = (radius, sectors, height, center, pitch, numLofts) => {
+
+fn helicalGear = (radius, numTeeth, height, center, pitch, numLofts) => {
   return [0..int(numLofts-1)]
   |> map(%, (numLoft) => {
         plane = offsetPlane("YZ", height * numLoft)
-        return gearSketch(radius, sectors, height, center, plane, pitch * numLoft)
+        return gearSketch(radius, numTeeth, height, center, plane, 90, pitch * numLoft)
     })
-  |> loft(%, {vDegree: 2})
+  |> loft(%, {vDegree: 1})
 }
 
 radius = 15
-numTeeth = 8
+numTeeth = 10
 height = 2
 center = [40, 10]
-pitch = 15
-numLofts = 10
+plane = "XY"
+totalDegrees = 90
+startDegree = 0
+pitch = 10
+numLofts = 2
+
 helicalGear(radius, numTeeth, height, center, pitch, numLofts)

@@ -1,0 +1,41 @@
+fn pipeWithScrewPlate = (plane, length, center, radius, thickness) => {
+  fn pipe = (radius, thickness, length, center, plane) => {
+    holeRadius = radius - thickness
+    return startSketchOn(plane)
+  |> circle({ center: center, radius: radius }, %)
+  |> hole(circle({ center: center, radius: holeRadius }, %), %)
+  |> extrude(length, %)
+}
+  fn screwHoles = (sg, n, plateCenter) => {
+    gap = 2
+    center = [plateCenter[0] + gap, plateCenter[1]]
+    return circle({ center: center, radius: .375 }, sg)
+  |> patternCircular2d({
+       instances: n,
+       center: plateCenter,
+       arcDegrees: 360,
+       rotateDuplicates: false
+     }, %)
+}
+
+  fn screwPlate = (plane, length, center) => {
+    return startSketchOn(offsetPlane(plane, length))
+  // plate itself
+  |> circle({ center: center, radius: 3 }, %)
+  // big central hole
+  |> hole(circle({
+       center: center,
+       radius: radius - thickness
+     }, %), %)
+  // small screw holes
+  |> hole(screwHoles(%, 4, center), %)
+  |> extrude(1, %)
+}
+  pipe(radius, thickness, length, center, plane)
+  return screwPlate(plane, length, center)
+}
+
+radius = 1.25
+thickness = 0.25
+back = pipeWithScrewPlate("XZ", 12, [0, 0], radius, thickness)
+up = pipeWithScrewPlate("XY", 4, [0, -radius], radius, thickness)
