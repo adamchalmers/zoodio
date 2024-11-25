@@ -1,0 +1,35 @@
+mySolid = startSketchOn('XZ')
+  |> circle({
+    center: [0, 0],
+    radius: 2,
+  }, %)
+  |> extrude(1, %)
+
+
+
+numInstances = 10
+axis = [0, 1, 0]
+angle = 270
+center = [15, 0, 0]
+
+fn transform = (i) => {
+  return {
+    // translate: [0, 0, -i * 8],
+    rotation: {
+      axis: axis,
+      angle: (angle/numInstances)*(i),
+      origin: center,
+    }
+  }
+}
+
+patternOldData = {
+  instances: numInstances,
+  axis: axis,
+  center: center,
+  arcDegrees: angle,
+  rotateDuplicates: true,
+}
+
+// patternNew = patternTransform(numInstances, transform, mySolid)
+patternOld = patternCircular3d(patternOldData, mySolid)

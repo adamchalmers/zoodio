@@ -15,7 +15,7 @@ fn gearSketch = (radius, sectors, height, center, plane, startDegree) => {
     theta = 120 / sectors
     intervals = [
       angleStart,
-      angleStart + theta,
+      angleStart + 0.5 * theta,
       angleStart + 2 * theta,
       angleStart + 3 * theta
     ]
@@ -28,41 +28,42 @@ fn gearSketch = (radius, sectors, height, center, plane, startDegree) => {
         radius: r
       }
     }
+
     sector = acc
-    // Draw gear body, along the inner circle.
-    |> arc(ofIntervals(0, 1, radius), %)
-    // Side of tooth, from base up to the tip
-    |> lineTo(pointFor(intervals[1], radius + height), %)
-    // Outer edge of tooth
-    |> arc(ofIntervals(1, 2, radius + height), %)
-    // End of tooth, tip back down to the base
-    |> lineTo(pointFor(intervals[2], radius), %)
-    // Tooth is finished, draw more of the gear body.
-    |> arc(ofIntervals(2, 3, radius), %)
-    
+      // Draw gear body, along the inner circle.
+      |> arc(ofIntervals(0, 1, radius), %)
+      // Side of tooth, from base up to the tip
+      |> lineTo(pointFor(intervals[1], radius + height), %)
+      // Outer edge of tooth
+      |> arc(ofIntervals(1, 2, radius + height), %)
+      // End of tooth, tip back down to the base
+      |> lineTo(pointFor(intervals[2], radius), %)
+      // Tooth is finished, draw more of the gear body.
+      |> arc(ofIntervals(2, 3, radius), %)
+
     return sector
   }
 
   return startSketchOn(plane)
-  |> startProfileAt([
-       cos(toRadians(startDegree)) * radius + cx,
-       sin(toRadians(startDegree)) * radius + cy
-     ], %)
-  |> reduce([1 .. int(sectors)], %, drawOneSectorOfGear)
-  |> close(%)
+    |> startProfileAt([
+         cos(toRadians(startDegree)) * radius + cx,
+         sin(toRadians(startDegree)) * radius + cy
+       ], %)
+    |> reduce([1 .. int(sectors)], %, drawOneSectorOfGear)
+    |> close(%)
 }
 
 fn helicalGear = (radius, sectors, height, center, pitch, numLofts) => {
-  return [0..int(numLofts-1)]
-  |> map(%, (numLoft) => {
-        plane = offsetPlane("YZ", height * numLoft)
-        return gearSketch(radius, sectors, height, center, plane, pitch * numLoft)
+  return [0 .. int(numLofts - 1)]
+    |> map(%, (numLoft) => {
+      plane = offsetPlane("YZ", height * numLoft)
+      return gearSketch(radius, sectors, height, center, plane, pitch * numLoft * pow(1, numLoft))
     })
-  |> loft(%, {vDegree: 2})
+    |> loft(%)
 }
 
 radius = 15
-numTeeth = 8
+numTeeth = 10
 height = 2
 center = [40, 10]
 pitch = 15

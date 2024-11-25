@@ -35,7 +35,43 @@ fn pipeWithScrewPlate = (plane, length, center, radius, thickness) => {
   return screwPlate(plane, length, center)
 }
 
+fn mirror = (geo) => {
+  return patternTransform(2, (id) => {
+    return {rotation: { angle: 180 * id}}
+  }, geo)
+}
+
+fn diamondBase = (plane, angle, length, holeRadius, height, center) => {
+  smallAngle = angle
+  bigAngle = 180 - smallAngle
+  fn screwHole = (sk, n) => {
+    return circle({
+      center: [center[0] + n * length / 2, center[1]],
+      radius: holeRadius
+    }, sk)
+  }
+  base = startSketchOn(plane)
+    |> startProfileAt([center[0], center[1] - (length / 2)], %)
+    |> angledLine({ angle: smallAngle, length: length }, %)
+    |> angledLine({ angle: bigAngle, length: length }, %)
+    |> angledLine({
+         angle: 180 + smallAngle,
+         length: length
+       }, %)
+    |> angledLine({
+         angle: 180 + bigAngle,
+         length: length
+       }, %)
+    |> close(%)
+    |> hole(screwHole(%, -1), %)
+    |> hole(screwHole(%, 1), %)
+    |> extrude(height, %)
+  return base
+}
+
 radius = 1.25
 thickness = 0.25
-back = pipeWithScrewPlate("XZ", 12, [0, 0], radius, thickness)
+backPipeLen = 12
+diamondBase(offsetPlane("XY", -10), 30, 10, 0.5, 1, [0, -backPipeLen])
+back = pipeWithScrewPlate("XZ", backPipeLen, [0, 0], radius, thickness)
 up = pipeWithScrewPlate("XY", 4, [0, -radius], radius, thickness)

@@ -1,0 +1,34 @@
+fn square = (length, center) => {
+  l = length / 2
+  x = center[0]
+  y = center[1]
+  p0 = [-l + x, -l + y]
+  p1 = [-l + x,  l + y]
+  p2 = [ l + x,  l + y]
+  p3 = [ l + x, -l + y]
+  return startSketchAt(p0)
+    |> lineTo(p1, %)
+    |> lineTo(p2, %)
+    |> lineTo(p3, %)
+    |> lineTo(p0, %)
+    |> close(%)
+}
+
+fn cube = (length, center) => {
+  return square(length, center)
+    |> extrude(length, %)
+}
+
+fn gridOfCubes = (cubeLen, rows, cols) => {
+  return [0..int(cols * rows - 1)]
+  |> map(%, (i) => { 
+    x = rem(i, cols)
+    y = int(i / cols)
+    return cube(10, [y * cubeLen, x * cubeLen])
+  })
+}
+
+length = 10
+rows = 6
+cols = 6
+gridOfCubes(length, rows, cols)

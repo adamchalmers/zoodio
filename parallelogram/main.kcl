@@ -1,4 +1,4 @@
-// Creates a parallelogram with the given side lengths.
+// Creates a parallelogram with the given diagonal lengths.
 fn pgram = (side1, side2) => {
   d1 = side1/2
   d2 = side2/2
@@ -14,4 +14,4 @@ fn pgram = (side1, side2) => {
   // |> close(%)
 }
 
-pgram(6, 15)
+pgram(6, 100)
