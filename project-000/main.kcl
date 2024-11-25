@@ -31,5 +31,5 @@ patternOldData = {
   rotateDuplicates: true,
 }
 
-// patternNew = patternTransform(numInstances, transform, mySolid)
-patternOld = patternCircular3d(patternOldData, mySolid)
+patternNew = patternTransform(numInstances, transform, mySolid)
+// patternOld = patternCircular3d(patternOldData, mySolid)
